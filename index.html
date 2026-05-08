@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Starty 🎉</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #0d0d0d;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    canvas#confetti-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      background: radial-gradient(ellipse at center, #1a0033 0%, #0d0d0d 70%);
+      position: relative;
+    }
+
+    #hero .emoji-rain {
+      font-size: 3rem;
+      animation: bounce 1.2s infinite alternate;
+      margin-bottom: 16px;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-18px); }
+    }
+
+    #hero h1 {
+      font-size: clamp(2.4rem, 10vw, 5.5rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #ff6fd8, #ffe74c, #3bc4f2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    #hero .nickname {
+      font-size: clamp(1.1rem, 5vw, 1.8rem);
+      color: #aaa;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+    }
+
+    #hero .age-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff6fd8, #ffe74c);
+      color: #000;
+      font-size: clamp(1.2rem, 5vw, 2rem);
+      font-weight: 900;
+      padding: 12px 32px;
+      border-radius: 50px;
+      margin-bottom: 40px;
+    }
+
+    .sound-btn {
+      background: transparent;
+      border: 2px solid #ffe74c;
+      color: #ffe74c;
+      font-size: 1rem;
+      padding: 10px 24px;
+      border-radius: 30px;
+      cursor: pointer;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      margin-bottom: 50px;
+    }
+    .sound-btn:hover { background: #ffe74c; color: #000; }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 24px;
+      font-size: 0.85rem;
+      color: #555;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+    /* ── SECTIONS ── */
+    .section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      text-align: center;
+      position: relative;
+    }
+
+    .section-number {
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 16px;
+    }
+
+    .section h2 {
+      font-size: clamp(1.8rem, 7vw, 3.5rem);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 24px;
+    }
+
+    .section p {
+      font-size: clamp(1rem, 3.5vw, 1.3rem);
+      line-height: 1.7;
+      color: #ccc;
+      max-width: 520px;
+    }
+
+    .highlight {
+      color: #ffe74c;
+      font-style: italic;
+    }
+
+    .big-emoji {
+      font-size: clamp(3rem, 12vw, 6rem);
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    /* Section colours */
+    #s1 { background: #0d0d0d; }
+    #s2 { background: #0a001a; }
+    #s3 { background: #001a0a; }
+    #s4 { background: #1a0000; }
+    #s5 { background: #0a0a1a; }
+
+    .divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #ff6fd8, #ffe74c);
+      border-radius: 2px;
+      margin: 24px auto;
+    }
+
+    /* ── ROAST CARD ── */
+    .roast-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 28px 24px;
+      max-width: 480px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .roast-card .verdict {
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #ff6fd8;
+      margin-bottom: 10px;
+    }
+
+    /* ── GIFT REVEAL ── */
+    .gift-box {
+      font-size: clamp(4rem, 18vw, 9rem);
+      cursor: pointer;
+      display: inline-block;
+      transition: transform 0.15s;
+      user-select: none;
+      filter: drop-shadow(0 0 20px rgba(255,231,76,0.4));
+    }
+    .gift-box:active { transform: scale(0.9); }
+
+    #gift-reveal {
+      display: none;
+      margin-top: 24px;
+      animation: fadeIn 0.6s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    #gift-reveal h3 {
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      margin-bottom: 12px;
+      color: #ffe74c;
+    }
+
+    #gift-reveal p {
+      font-size: clamp(0.95rem, 3vw, 1.15rem);
+      color: #ccc;
+      max-width: 400px;
+    }
+
+    /* ── FINAL ── */
+    #final {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at center, #1a001a 0%, #0d0d0d 70%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      text-align: center;
+    }
+
+    #final h2 {
+      font-size: clamp(1.6rem, 6vw, 3rem);
+      background: linear-gradient(135deg, #ff6fd8, #ffe74c, #3bc4f2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    #final .from {
+      font-size: clamp(1rem, 4vw, 1.4rem);
+      color: #888;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 32px;
+    }
+
+    #final .names {
+      font-size: clamp(1.6rem, 7vw, 2.8rem);
+      font-weight: 900;
+      color: #fff;
+      margin-top: 8px;
+    }
+
+    #final .ps {
+      margin-top: 40px;
+      font-size: 0.85rem;
+      color: #444;
+      font-style: italic;
+      max-width: 360px;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="emoji-rain">🎂</div>
+  <h1>Happy Birthday<br>Noah.</h1>
+  <div class="nickname">a.k.a. Starty</div>
+  <div class="age-badge">19 Years Old 🎉</div>
+  <button class="sound-btn" onclick="playBirthday()">🔊 Play Song</button>
+  <div class="scroll-hint">↓ scroll ↓</div>
+</section>
+
+<!-- ── ROAST 1: DRINKING ── -->
+<section class="section" id="s1">
+  <span class="big-emoji">🥃</span>
+  <div class="section-number">Tribute · 01</div>
+  <h2>The Drinking <span class="highlight">Legend</span></h2>
+  <div class="divider"></div>
+  <div class="roast-card">
+    <div class="verdict">Official Record</div>
+    <p>
+      19 years on this planet and he has yet to have a single drink
+      without ending up horizontal. One pint in — lights out. Two pints —
+      he's telling strangers he loves them. Three pints —
+      <span class="highlight">missing, presumed unconscious.</span>
+    </p>
+    <br>
+    <p style="color:#555; font-size:0.85rem;">
+      Average drinks before blackout: <strong style="color:#ffe74c;">1.7</strong>
+    </p>
+  </div>
+</section>
+
+<!-- ── GIFT SECTION ── -->
+<section class="section" id="s2">
+  <div class="section-number">Your Present</div>
+  <h2>We Got You<br>Something <span class="highlight">Special</span></h2>
+  <div class="divider"></div>
+  <p style="margin-bottom: 32px;">Tap to unwrap 👇</p>
+  <span class="gift-box" onclick="revealGift()" id="gift-emoji">🎁</span>
+  <div id="gift-reveal">
+    <h3>A Single Pint.</h3>
+    <p>
+      Because let's be honest — that's all you need.
+      One pint and you're done for the night anyway, so we saved the rest of the money for ourselves.
+      Happy birthday, Starty. You're <span class="highlight">very low maintenance.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ── ROAST 2: HOLIDAY ── -->
+<section class="section" id="s3">
+  <span class="big-emoji">🏖️</span>
+  <div class="section-number">Tribute · 02</div>
+  <h2>The Lads Holiday <span class="highlight">Incident</span></h2>
+  <div class="divider"></div>
+  <div class="roast-card">
+    <div class="verdict">Unconfirmed · Yet Very Confirmed</div>
+    <p>
+      Every lads holiday has a story. Ours has Starty pulling someone
+      who was born around the time the first iPhone came out.
+      <span class="highlight">Truly inspirational behaviour.</span>
+    </p>
+    <br>
+    <p>
+      She had a bedtime. He respected it.
+    </p>
+  </div>
+</section>
+
+<!-- ── ROAST 3: SISTER ── -->
+<section class="section" id="s4">
+  <span class="big-emoji">😅</span>
+  <div class="section-number">Tribute · 03</div>
+  <h2>A Word About<br>The <span class="highlight">Family</span></h2>
+  <div class="divider"></div>
+  <div class="roast-card">
+    <div class="verdict">Lads, we need to talk.</div>
+    <p>
+      Noah has been holding out on us.
+      We met his sister and genuinely don't understand how they
+      came from the same gene pool.
+    </p>
+    <br>
+    <p>
+      <span class="highlight">Noah got the drinking. She got everything else.</span>
+    </p>
+    <br>
+    <p style="color:#555; font-size:0.85rem;">
+      (This is not the end of this conversation, Noah.)
+    </p>
+  </div>
+</section>
+
+<!-- ── FINAL ── -->
+<section id="final">
+  <span class="big-emoji">🥂</span>
+  <h2>But for real though —</h2>
+  <div class="divider"></div>
+  <p style="color:#ccc; max-width:440px; font-size: clamp(1rem, 3.5vw, 1.2rem); line-height: 1.8;">
+    Happy 19th birthday mate. You're an absolute menace, an embarrassment on holiday,
+    and a genuine liability after a single drink —
+    and that's exactly why we love you.
+    <br><br>
+    <span class="highlight">Here's to many more blackouts.</span> 🥃
+  </p>
+  <div class="from">With love (and receipts), from</div>
+  <div class="names">Luka &amp; Rory 🖤</div>
+  <p class="ps">
+    P.S. We still want your sister's number.
+  </p>
+</section>
+
+<!-- ── SCRIPTS ── -->
+<script>
+  // Confetti
+  (function() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let pieces = [];
+    let running = false;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const colours = ['#ff6fd8','#ffe74c','#3bc4f2','#ff4444','#44ff88','#ffffff'];
+
+    function spawn(n) {
+      for (let i = 0; i < n; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: -10,
+          r: Math.random() * 7 + 3,
+          c: colours[Math.floor(Math.random() * colours.length)],
+          vx: (Math.random() - 0.5) * 4,
+          vy: Math.random() * 4 + 2,
+          spin: (Math.random() - 0.5) * 0.2,
+          angle: Math.random() * Math.PI * 2,
+          shape: Math.random() > 0.5 ? 'rect' : 'circle'
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
+        ctx.fillStyle = p.c;
+        if (p.shape === 'rect') {
+          ctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r);
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+        p.x += p.vx;
+        p.y += p.vy;
+        p.angle += p.spin;
+        p.vy += 0.05;
+      });
+      pieces = pieces.filter(p => p.y < canvas.height + 20);
+    }
+
+    function loop() {
+      draw();
+      if (running || pieces.length > 0) requestAnimationFrame(loop);
+    }
+
+    function burst(n, duration) {
+      running = true;
+      let elapsed = 0;
+      const interval = setInterval(() => {
+        spawn(8);
+        elapsed += 100;
+        if (elapsed >= duration) { clearInterval(interval); running = false; }
+      }, 100);
+      loop();
+    }
+
+    // Fire on load
+    window.addEventListener('load', () => burst(40, 3000));
+
+    // Fire on scroll milestones
+    let fired = new Set();
+    window.addEventListener('scroll', () => {
+      const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      [25, 50, 75, 99].forEach(t => {
+        if (pct >= t && !fired.has(t)) { fired.add(t); burst(20, 1500); }
+      });
+    });
+  })();
+
+  // Gift reveal
+  function revealGift() {
+    const emoji = document.getElementById('gift-emoji');
+    const reveal = document.getElementById('gift-reveal');
+    emoji.textContent = '🍺';
+    reveal.style.display = 'block';
+  }
+
+  // Happy Birthday via Web Audio API
+  function playBirthday() {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Happy Birthday notes: C C D C F E | C C D C G F | C C C5 A F E D | Bb Bb A F G F
+    const notes = {
+      C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23,
+      G4: 392.00, A4: 440.00, Bb4: 466.16,
+      C5: 523.25
+    };
+
+    const song = [
+      // "Happy Birthday to you"
+      [notes.C4, 0.3], [notes.C4, 0.3], [notes.D4, 0.6], [notes.C4, 0.6], [notes.F4, 0.6], [notes.E4, 1.2],
+      // "Happy Birthday to you"
+      [notes.C4, 0.3], [notes.C4, 0.3], [notes.D4, 0.6], [notes.C4, 0.6], [notes.G4, 0.6], [notes.F4, 1.2],
+      // "Happy Birthday dear Starty"
+      [notes.C4, 0.3], [notes.C4, 0.3], [notes.C5, 0.6], [notes.A4, 0.6], [notes.F4, 0.6], [notes.E4, 0.6], [notes.D4, 1.2],
+      // "Happy Birthday to you"
+      [notes.Bb4, 0.3], [notes.Bb4, 0.3], [notes.A4, 0.6], [notes.F4, 0.6], [notes.G4, 0.6], [notes.F4, 1.4],
+    ];
+
+    let time = ctx.currentTime + 0.1;
+    song.forEach(([freq, dur]) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, time);
+      gain.gain.setValueAtTime(0.35, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + dur - 0.05);
+      osc.start(time);
+      osc.stop(time + dur);
+      time += dur;
+    });
+  }
+</script>
+</body>
+</html>
