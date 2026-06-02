@@ -698,13 +698,7 @@
 </head>
 <body>
 
-<!-- Hidden SoundCloud Widget -->
-<iframe id="sc-widget"
-  src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/jacob-multari-172687722/pour-it-up-madebymultz-hoodtrap-remix&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false"
-  allow="autoplay"
-  scrolling="no"
-  frameborder="no">
-</iframe>
+<!-- SC widget injected dynamically on first preview click -->
 
 <!-- App Header -->
 <header class="header">
@@ -767,7 +761,6 @@
   </div>
 </div>
 
-<script src="https://w.soundcloud.com/player/api.js"></script>
 <script>
 // ── SONG DATA ─────────────────────────────────────────────────────────────────
 const SONGS = [
@@ -1133,22 +1126,55 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
   });
 });
 
-// ── SC WIDGET ─────────────────────────────────────────────────────────────────
+// ── SC WIDGET (lazy-loaded) ───────────────────────────────────────────────────
 let widget = null;
 let widgetReady = false;
-let widgetInitialized = false;
+let scApiLoading = false;
+let scApiLoaded = false;
 
-function initWidget() {
-  if (typeof SC === 'undefined') return;
-  const iframe = document.getElementById('sc-widget');
+function ensureSCReady() {
+  return new Promise((resolve, reject) => {
+    // Already fully ready
+    if (scApiLoaded && widget && widgetReady) { resolve(); return; }
+
+    // Load the API script if not started yet
+    if (!scApiLoading) {
+      scApiLoading = true;
+      const s = document.createElement('script');
+      s.src = 'https://w.soundcloud.com/player/api.js';
+      s.onerror = () => reject(new Error('SC API failed to load'));
+      s.onload = () => {
+        scApiLoaded = true;
+        createSCWidget(resolve);
+      };
+      document.head.appendChild(s);
+    } else {
+      // Script is loading — poll until widget is ready
+      const check = setInterval(() => {
+        if (widgetReady) { clearInterval(check); resolve(); }
+      }, 100);
+    }
+  });
+}
+
+function createSCWidget(onReady) {
+  // Create hidden iframe
+  let iframe = document.getElementById('sc-widget');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'sc-widget';
+    iframe.setAttribute('allow', 'autoplay');
+    iframe.setAttribute('scrolling', 'no');
+    iframe.setAttribute('frameborder', 'no');
+    iframe.src = 'https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/jacob-multari-172687722/pour-it-up-madebymultz-hoodtrap-remix&auto_play=false&hide_related=true&show_comments=false&show_user=false';
+    document.body.appendChild(iframe);
+  }
   widget = SC.Widget(iframe);
   widget.bind(SC.Widget.Events.READY, () => {
     widgetReady = true;
+    widget.bind(SC.Widget.Events.FINISH, () => stopPreview(true));
+    if (onReady) onReady();
   });
-  widget.bind(SC.Widget.Events.FINISH, () => {
-    stopPreview(true);
-  });
-  widgetInitialized = true;
 }
 
 // ── PLAYBACK STATE ─────────────────────────────────────────────────────────────
@@ -1182,28 +1208,25 @@ function handlePreview(song) {
 }
 
 function playSCSong(song) {
-  if (!widgetInitialized) initWidget();
-  if (!widgetReady || !widget) {
-    // Widget not ready yet — try again shortly
-    setTimeout(() => playSCSong(song), 400);
-    return;
-  }
-
   currentSongId = song.id;
   isPaused = false;
   progressDuration = song.previewDuration;
-
   markPlaying(song.id, true);
   showMiniPlayer(song);
 
-  widget.bind(SC.Widget.Events.PLAY, function onFirstPlay() {
-    widget.unbind(SC.Widget.Events.PLAY);
-    if (song.previewStart > 0) widget.seekTo(song.previewStart * 1000);
-    startProgress(song.previewDuration);
-    previewTimeout = setTimeout(() => stopPreview(true), song.previewDuration * 1000 + 800);
+  ensureSCReady().then(() => {
+    widget.bind(SC.Widget.Events.PLAY, function onFirstPlay() {
+      widget.unbind(SC.Widget.Events.PLAY);
+      if (song.previewStart > 0) widget.seekTo(song.previewStart * 1000);
+      startProgress(song.previewDuration);
+      previewTimeout = setTimeout(() => stopPreview(true), song.previewDuration * 1000 + 800);
+    });
+    widget.load(song.scUrl, { auto_play: true });
+  }).catch(() => {
+    // SC failed — fall back to find-song modal
+    stopPreview(false);
+    openFindModal(song, true);
   });
-
-  widget.load(song.scUrl, { auto_play: true });
 }
 
 function pausePreview() {
@@ -1354,16 +1377,6 @@ document.getElementById('find-modal').addEventListener('click', e => {
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 renderCards();
-
-// Init SC widget once api.js loads
-if (typeof SC !== 'undefined') {
-  initWidget();
-} else {
-  // api.js might still be loading
-  window.addEventListener('load', () => {
-    if (typeof SC !== 'undefined') initWidget();
-  });
-}
 
 // Keyboard: Escape closes modal
 document.addEventListener('keydown', e => {
