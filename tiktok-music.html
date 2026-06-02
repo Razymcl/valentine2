@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ViralBeats — TikTok Music Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #080810;
+      --bg2:          #0c0c18;
+      --card:         #0f0f1c;
+      --card-hover:   #141428;
+      --border:       #1c1c32;
+      --border-hover: rgba(139,92,246,0.45);
+      --p1:           #8b5cf6;
+      --p2:           #ec4899;
+      --grad:         linear-gradient(135deg, #8b5cf6, #ec4899);
+      --t1:           #f0efff;
+      --t2:           #8080a8;
+      --t3:           #44446a;
+      --badge-h:      rgba(245,158,11,0.12);
+      --badge-b:      rgba(245,158,11,0.32);
+      --badge-hc:     #f59e0b;
+      --badge-bb:     rgba(239,68,68,0.12);
+      --badge-bbc:    #ef4444;
+      --badge-bbb:    rgba(239,68,68,0.32);
+      --badge-sl:     rgba(96,165,250,0.12);
+      --badge-slc:    #60a5fa;
+      --badge-slb:    rgba(96,165,250,0.32);
+      --badge-ma:     rgba(52,211,153,0.12);
+      --badge-mac:    #34d399;
+      --badge-mab:    rgba(52,211,153,0.32);
+      --badge-re:     rgba(167,139,250,0.12);
+      --badge-rec:    #a78bfa;
+      --badge-reb:    rgba(167,139,250,0.32);
+      --r:            12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--t1);
+      min-height: 100vh;
+      padding-bottom: 110px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8,8,16,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 16px 12px;
+    }
+
+    .header-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-name {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: var(--t3);
+      font-weight: 500;
+      margin-top: 1px;
+      letter-spacing: 0.3px;
+    }
+
+    .header-count {
+      font-size: 12px;
+      color: var(--t3);
+      font-weight: 600;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .header-count span {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-wrap {
+      position: sticky;
+      top: 67px;
+      z-index: 99;
+      background: rgba(8,8,16,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .filter-bar {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      flex-shrink: 0;
+      padding: 7px 15px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--t2);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+      letter-spacing: 0.2px;
+    }
+
+    .filter-btn:hover:not(.active) {
+      border-color: var(--p1);
+      color: var(--t1);
+      background: rgba(139,92,246,0.06);
+    }
+
+    .filter-btn.active {
+      background: var(--p1);
+      border-color: var(--p1);
+      color: #fff;
+    }
+
+    /* ── SONGS FEED ── */
+    .feed {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    /* ── SONG CARD ── */
+    .song-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+      animation: slideIn 0.35s ease both;
+    }
+
+    .song-card:active { transform: scale(0.99); }
+
+    .song-card:hover {
+      border-color: var(--border-hover);
+      background: var(--card-hover);
+    }
+
+    .song-card.hidden { display: none; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* stagger animation delay */
+    .song-card:nth-child(1)  { animation-delay: 0.02s; }
+    .song-card:nth-child(2)  { animation-delay: 0.04s; }
+    .song-card:nth-child(3)  { animation-delay: 0.06s; }
+    .song-card:nth-child(4)  { animation-delay: 0.08s; }
+    .song-card:nth-child(5)  { animation-delay: 0.10s; }
+    .song-card:nth-child(6)  { animation-delay: 0.12s; }
+    .song-card:nth-child(7)  { animation-delay: 0.14s; }
+    .song-card:nth-child(8)  { animation-delay: 0.16s; }
+    .song-card:nth-child(9)  { animation-delay: 0.18s; }
+    .song-card:nth-child(10) { animation-delay: 0.20s; }
+
+    .card-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+    }
+
+    .song-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--t3);
+      min-width: 18px;
+      text-align: center;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .song-artwork {
+      width: 46px;
+      height: 46px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .song-artwork-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--grad);
+      opacity: 0.25;
+    }
+
+    .song-artwork span { position: relative; z-index: 1; }
+
+    .song-info { flex: 1; min-width: 0; }
+
+    .song-title {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--t1);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .song-artist {
+      font-size: 12px;
+      color: var(--t2);
+      margin-top: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .song-type {
+      font-size: 11px;
+      color: var(--t3);
+      margin-top: 2px;
+      font-style: italic;
+    }
+
+    .song-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .b-trending { background: var(--badge-h);  border: 1px solid var(--badge-b);  color: var(--badge-hc); }
+    .b-bass     { background: var(--badge-bb); border: 1px solid var(--badge-bbb); color: var(--badge-bbc); }
+    .b-slowed   { background: var(--badge-sl); border: 1px solid var(--badge-slb); color: var(--badge-slc); }
+    .b-mashup   { background: var(--badge-ma); border: 1px solid var(--badge-mab); color: var(--badge-mac); }
+    .b-remix    { background: var(--badge-re); border: 1px solid var(--badge-reb); color: var(--badge-rec); }
+
+    /* ── CARD ACTIONS ── */
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .btn-preview {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: none;
+      background: var(--grad);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.15s, transform 0.12s;
+      letter-spacing: 0.1px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-preview::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background 0.15s;
+    }
+
+    .btn-preview:hover::after { background: rgba(255,255,255,0.08); }
+    .btn-preview:active { transform: scale(0.97); }
+
+    .btn-preview.playing {
+      background: linear-gradient(135deg, #ec4899, #f97316);
+    }
+
+    .btn-preview .play-icon { font-size: 14px; transition: all 0.15s; }
+
+    .waveform-anim {
+      display: none;
+      gap: 2px;
+      align-items: center;
+      height: 16px;
+    }
+
+    .btn-preview.playing .waveform-anim { display: flex; }
+    .btn-preview.playing .play-icon { display: none; }
+    .btn-preview.playing .preview-label { display: none; }
+    .btn-preview.playing .pause-label { display: inline; }
+    .btn-preview .pause-label { display: none; }
+
+    .wbar {
+      width: 3px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.9);
+      animation: wv 0.7s ease-in-out infinite;
+    }
+    .wbar:nth-child(1) { height: 6px;  animation-delay: 0s; }
+    .wbar:nth-child(2) { height: 12px; animation-delay: 0.1s; }
+    .wbar:nth-child(3) { height: 16px; animation-delay: 0.2s; }
+    .wbar:nth-child(4) { height: 10px; animation-delay: 0.3s; }
+    .wbar:nth-child(5) { height: 14px; animation-delay: 0.15s; }
+    @keyframes wv {
+      0%,100% { transform: scaleY(0.4); }
+      50%      { transform: scaleY(1); }
+    }
+
+    .btn-find {
+      padding: 10px 13px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--t2);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.18s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-find:hover {
+      border-color: var(--p1);
+      color: var(--t1);
+      background: rgba(139,92,246,0.06);
+    }
+
+    /* ── PROGRESS BAR (per card) ── */
+    .card-progress {
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .card-progress.show { display: block; }
+
+    .card-progress-fill {
+      height: 100%;
+      background: var(--grad);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.5s linear;
+    }
+
+    /* ── MINI PLAYER ── */
+    .mini-player {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      background: rgba(12,12,24,0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      padding: 10px 14px max(10px, env(safe-area-inset-bottom));
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    .mini-player.up { transform: translateY(0); }
+
+    .mini-player-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mp-artwork {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      background: var(--grad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      opacity: 0.85;
+    }
+
+    .mp-info { flex: 1; min-width: 0; }
+
+    .mp-title {
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--t1);
+    }
+
+    .mp-artist {
+      font-size: 11px;
+      color: var(--t2);
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mp-bar {
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: 5px;
+      overflow: hidden;
+    }
+
+    .mp-bar-fill {
+      height: 100%;
+      background: var(--grad);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.8s linear;
+    }
+
+    .mp-controls { display: flex; gap: 7px; align-items: center; flex-shrink: 0; }
+
+    .mp-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--t2);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.18s;
+      font-family: inherit;
+    }
+
+    .mp-btn:hover { border-color: var(--p1); color: var(--t1); }
+
+    .mp-find {
+      padding: 7px 13px;
+      border-radius: 18px;
+      border: none;
+      background: var(--grad);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      letter-spacing: 0.2px;
+      transition: opacity 0.15s;
+    }
+
+    .mp-find:hover { opacity: 0.88; }
+
+    /* ── FIND SONG MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 600;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-sheet {
+      width: 100%;
+      background: var(--card);
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      padding: 0 0 max(24px, env(safe-area-inset-bottom));
+      transform: translateY(40px);
+      transition: transform 0.28s cubic-bezier(0.34,1.2,0.64,1);
+    }
+
+    .modal-overlay.open .modal-sheet { transform: translateY(0); }
+
+    .modal-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 12px auto 0;
+    }
+
+    .modal-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-song-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--t1);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .modal-song-artist {
+      font-size: 13px;
+      color: var(--t2);
+      margin-top: 2px;
+    }
+
+    .modal-title-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--t3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .modal-links {
+      padding: 14px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-link-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--t1);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s;
+    }
+
+    .modal-link-btn:hover {
+      border-color: var(--border-hover);
+      background: rgba(139,92,246,0.07);
+    }
+
+    .modal-link-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .icon-spotify { background: rgba(29,185,84,0.15); }
+    .icon-youtube { background: rgba(255,0,0,0.12); }
+    .icon-soundcloud { background: rgba(255,85,0,0.12); }
+
+    .modal-link-label { font-size: 11px; color: var(--t3); font-weight: 400; margin-top: 1px; }
+
+    .modal-close-btn {
+      display: block;
+      width: calc(100% - 40px);
+      margin: 4px 20px 0;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--t2);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.18s;
+    }
+
+    .modal-close-btn:hover { color: var(--t1); border-color: var(--border-hover); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--t3);
+      display: none;
+    }
+
+    .empty-state.show { display: block; }
+    .empty-state .emoji { font-size: 40px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── HIDDEN SC WIDGET ── */
+    #sc-widget {
+      position: fixed;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (min-width: 480px) {
+      .logo-name { font-size: 26px; }
+      .song-title { font-size: 15px; }
+      .feed { padding: 14px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Hidden SoundCloud Widget -->
+<iframe id="sc-widget"
+  src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/jacob-multari-172687722/pour-it-up-madebymultz-hoodtrap-remix&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false"
+  allow="autoplay"
+  scrolling="no"
+  frameborder="no">
+</iframe>
+
+<!-- App Header -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-name">ViralBeats</span>
+      <span class="logo-sub">TikTok Music Discovery Archive</span>
+    </div>
+    <div class="header-count"><span id="visible-count">20</span> tracks</div>
+  </div>
+</header>
+
+<!-- Filter Bar -->
+<div class="filter-wrap">
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="trending">🔥 Trending</button>
+    <button class="filter-btn" data-filter="bass">🔊 Bass Boosted</button>
+    <button class="filter-btn" data-filter="slowed">🌙 Slowed</button>
+    <button class="filter-btn" data-filter="mashup">🎭 Mashups</button>
+    <button class="filter-btn" data-filter="remix">🎛️ Remixes</button>
+  </div>
+</div>
+
+<!-- Songs Feed -->
+<div class="feed" id="feed"></div>
+<div class="empty-state" id="empty">
+  <div class="emoji">🎵</div>
+  <p>No tracks in this category yet</p>
+</div>
+
+<!-- Mini Player -->
+<div class="mini-player" id="mini-player">
+  <div class="mini-player-inner">
+    <div class="mp-artwork" id="mp-artwork">🎵</div>
+    <div class="mp-info">
+      <div class="mp-title" id="mp-title">Now Playing</div>
+      <div class="mp-artist" id="mp-artist"></div>
+      <div class="mp-bar"><div class="mp-bar-fill" id="mp-fill"></div></div>
+    </div>
+    <div class="mp-controls">
+      <button class="mp-btn" id="mp-pause-btn" title="Pause">⏸</button>
+      <button class="mp-find" id="mp-find-btn">Full Song</button>
+      <button class="mp-btn" id="mp-close-btn" title="Close">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- Find Full Song Modal -->
+<div class="modal-overlay" id="find-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title-label">Find Full Song</div>
+      <div class="modal-song-name" id="modal-song-name"></div>
+      <div class="modal-song-artist" id="modal-song-artist"></div>
+    </div>
+    <div class="modal-links" id="modal-links"></div>
+    <button class="modal-close-btn" id="modal-close">Done</button>
+  </div>
+</div>
+
+<script src="https://w.soundcloud.com/player/api.js"></script>
+<script>
+// ── SONG DATA ─────────────────────────────────────────────────────────────────
+const SONGS = [
+  {
+    id: 1,
+    title: "Pour It Up",
+    artist: "madebymultz",
+    type: "Hood Trap Remix",
+    emoji: "🥃",
+    cats: ["trending","remix"],
+    previewSrc: "sc",
+    scUrl: "https://soundcloud.com/jacob-multari-172687722/pour-it-up-madebymultz-hoodtrap-remix",
+    previewStart: 15,
+    previewDuration: 30,
+    links: {
+      soundcloud: { url: "https://soundcloud.com/jacob-multari-172687722/pour-it-up-madebymultz-hoodtrap-remix", label: "Open on SoundCloud" },
+      youtube:    { url: "https://www.youtube.com/results?search_query=Pour+It+Up+madebymultz+hood+trap+remix", label: "Search on YouTube" },
+      spotify:    { url: "https://open.spotify.com/search/Pour%20It%20Up%20Rihanna", label: "Search on Spotify" }
+    }
+  },
+  {
+    id: 2,
+    title: "Don't Stop the Music",
+    artist: "m1ller",
+    type: "Hood Trap Edit",
+    emoji: "🎷",
+    cats: ["trending","remix"],
+    previewSrc: "sc",
+    scUrl: "https://soundcloud.com/m1ller-126757133/dont-stop-the-music-hoodtrap",
+    previewStart: 10,
+    previewDuration: 30,
+    links: {
+      soundcloud: { url: "https://soundcloud.com/m1ller-126757133/dont-stop-the-music-hoodtrap", label: "Open on SoundCloud" },
+      youtube:    { url: "https://www.youtube.com/results?search_query=Don%27t+Stop+The+Music+hood+trap+edit", label: "Search on YouTube" },
+      spotify:    { url: "https://open.spotify.com/search/Don%27t%20Stop%20The%20Music%20Rihanna", label: "Search on Spotify" }
+    }
+  },
+  {
+    id: 3,
+    title: "My Mama Used to Dance",
+    artist: "TikTok Viral Edit",
+    type: "Trending Edit",
+    emoji: "💃",
+    cats: ["trending"],
+    previewSrc: "sc",
+    scUrl: "https://soundcloud.com/harry-brian-685583094/my-moma-used-to-dance-like",
+    previewStart: 0,
+    previewDuration: 30,
+    links: {
+      soundcloud: { url: "https://soundcloud.com/harry-brian-685583094/my-moma-used-to-dance-like", label: "Open on SoundCloud" },
+      youtube:    { url: "https://www.youtube.com/results?search_query=My+Mama+Used+to+Dance+TikTok+viral", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 4,
+    title: "Beauty and a Beat",
+    artist: "Justin Bieber",
+    type: "Slowed — Coachella Version",
+    emoji: "🎶",
+    cats: ["trending","slowed"],
+    previewSrc: "sc",
+    scUrl: "https://soundcloud.com/lou-boy-380803390/david-laid-beauty-and-a-beat-slowed",
+    previewStart: 20,
+    previewDuration: 30,
+    links: {
+      soundcloud: { url: "https://soundcloud.com/lou-boy-380803390/david-laid-beauty-and-a-beat-slowed", label: "Open on SoundCloud" },
+      spotify:    { url: "https://open.spotify.com/search/Beauty%20and%20a%20Beat%20Justin%20Bieber", label: "Search on Spotify" },
+      youtube:    { url: "https://www.youtube.com/results?search_query=Justin+Bieber+Beauty+and+a+Beat+Coachella+slowed", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 5,
+    title: "Trap Queen",
+    artist: "Fetty Wap",
+    type: "TikTok Remix Compilation",
+    emoji: "👑",
+    cats: ["trending","remix"],
+    previewSrc: "search",
+    links: {
+      youtube:  { url: "https://www.youtube.com/results?search_query=Fetty+Wap+Trap+Queen+TikTok+remix+bass+boosted", label: "Search on YouTube" },
+      spotify:  { url: "https://open.spotify.com/search/Trap%20Queen%20Fetty%20Wap", label: "Search on Spotify" }
+    }
+  },
+  {
+    id: 6,
+    title: "Roses",
+    artist: "SAINt JHN",
+    type: "Imanbek Remix — Bass Boosted",
+    emoji: "🌹",
+    cats: ["trending","bass","remix"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/Roses%20SAINt%20JHN%20Imanbek%20Remix", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=SAINt+JHN+Roses+Imanbek+Remix+bass+boosted+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 7,
+    title: "STAY",
+    artist: "The Kid LAROI & Justin Bieber",
+    type: "Sped Up + Reverb",
+    emoji: "⚡",
+    cats: ["trending","remix"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/STAY%20Kid%20LAROI%20Justin%20Bieber", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=The+Kid+LAROI+Justin+Bieber+STAY+sped+up+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 8,
+    title: "Heat Waves",
+    artist: "Glass Animals",
+    type: "Slowed + Reverb",
+    emoji: "🌊",
+    cats: ["trending","slowed"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/Heat%20Waves%20Glass%20Animals%20slowed", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Glass+Animals+Heat+Waves+slowed+reverb+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 9,
+    title: "Running Up That Hill",
+    artist: "Kate Bush",
+    type: "TikTok Viral Edit",
+    emoji: "🏃",
+    cats: ["trending"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/Running%20Up%20That%20Hill%20Kate%20Bush", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Kate+Bush+Running+Up+That+Hill+TikTok+Stranger+Things", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 10,
+    title: "As It Was",
+    artist: "Harry Styles",
+    type: "Slowed + Reverb",
+    emoji: "🌙",
+    cats: ["trending","slowed"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/As%20It%20Was%20Harry%20Styles%20slowed", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Harry+Styles+As+It+Was+slowed+reverb+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 11,
+    title: "Anti-Hero",
+    artist: "Taylor Swift",
+    type: "Bass Boosted",
+    emoji: "🦸",
+    cats: ["trending","bass"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/Anti-Hero%20Taylor%20Swift", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Taylor+Swift+Anti-Hero+bass+boosted+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 12,
+    title: "drivers license",
+    artist: "Olivia Rodrigo",
+    type: "Slowed + Reverb",
+    emoji: "🚗",
+    cats: ["slowed"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/drivers%20license%20Olivia%20Rodrigo%20slowed", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Olivia+Rodrigo+drivers+license+slowed+reverb+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 13,
+    title: "Streets",
+    artist: "Doja Cat",
+    type: "Slowed — Silhouette Challenge",
+    emoji: "🕯️",
+    cats: ["trending","slowed"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/Streets%20Doja%20Cat%20slowed", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Doja+Cat+Streets+slowed+Silhouette+Challenge+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 14,
+    title: "Bad Guy",
+    artist: "Billie Eilish",
+    type: "Slowed + Reverb",
+    emoji: "😈",
+    cats: ["slowed"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/bad%20guy%20Billie%20Eilish%20slowed", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Billie+Eilish+bad+guy+slowed+reverb+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 15,
+    title: "The Business",
+    artist: "Tiësto",
+    type: "Bass Boosted",
+    emoji: "💼",
+    cats: ["bass","remix"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/The%20Business%20Tiesto", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Tiesto+The+Business+bass+boosted+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 16,
+    title: "Savage Love",
+    artist: "Jawsh 685 & Jason Derulo",
+    type: "Bass Boosted",
+    emoji: "💥",
+    cats: ["trending","bass"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/Savage%20Love%20Jawsh%20685%20Jason%20Derulo", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Jawsh+685+Jason+Derulo+Savage+Love+bass+boosted+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 17,
+    title: "MONTERO",
+    artist: "Lil Nas X",
+    type: "Phonk Remix",
+    emoji: "🐎",
+    cats: ["remix"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/MONTERO%20Lil%20Nas%20X", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Lil+Nas+X+MONTERO+phonk+remix+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 18,
+    title: "Sunroof",
+    artist: "Nicky Youre & Dazy",
+    type: "Sped Up — TikTok Edit",
+    emoji: "☀️",
+    cats: ["trending","remix"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/Sunroof%20Nicky%20Youre%20Dazy", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Nicky+Youre+Dazy+Sunroof+sped+up+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 19,
+    title: "Just for Me",
+    artist: "PinkPantheress",
+    type: "Slowed TikTok Edit",
+    emoji: "🩷",
+    cats: ["slowed","trending"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/Just%20for%20Me%20PinkPantheress", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=PinkPantheress+Just+for+Me+slowed+TikTok", label: "Search on YouTube" }
+    }
+  },
+  {
+    id: 20,
+    title: "Doja",
+    artist: "Central Cee",
+    type: "Slowed + Reverb",
+    emoji: "🎧",
+    cats: ["slowed","trending"],
+    previewSrc: "search",
+    links: {
+      spotify: { url: "https://open.spotify.com/search/Doja%20Central%20Cee", label: "Search on Spotify" },
+      youtube: { url: "https://www.youtube.com/results?search_query=Central+Cee+Doja+slowed+reverb+TikTok", label: "Search on YouTube" }
+    }
+  }
+];
+
+// ── BADGE HELPERS ──────────────────────────────────────────────────────────────
+const BADGE_MAP = {
+  trending: { cls: "b-trending", label: "🔥 Trending" },
+  bass:     { cls: "b-bass",     label: "🔊 Bass Boosted" },
+  slowed:   { cls: "b-slowed",   label: "🌙 Slowed" },
+  mashup:   { cls: "b-mashup",   label: "🎭 Mashup" },
+  remix:    { cls: "b-remix",    label: "🎛️ Remix" }
+};
+
+function makeBadges(cats) {
+  return cats.map(c => {
+    const b = BADGE_MAP[c];
+    return b ? `<span class="badge ${b.cls}">${b.label}</span>` : '';
+  }).join('');
+}
+
+// ── RENDER CARDS ───────────────────────────────────────────────────────────────
+function renderCards() {
+  const feed = document.getElementById('feed');
+  feed.innerHTML = SONGS.map((s, i) => `
+    <div class="song-card" id="card-${s.id}" data-cats="${s.cats.join(',')}">
+      <div class="card-main">
+        <div class="song-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="song-artwork">
+          <div class="song-artwork-bg"></div>
+          <span>${s.emoji}</span>
+        </div>
+        <div class="song-info">
+          <div class="song-title">${s.title}</div>
+          <div class="song-artist">${s.artist}</div>
+          <div class="song-type">${s.type}</div>
+          <div class="song-badges">${makeBadges(s.cats)}</div>
+        </div>
+      </div>
+      <div class="card-progress" id="prog-${s.id}">
+        <div class="card-progress-fill" id="prog-fill-${s.id}"></div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-preview" id="prev-btn-${s.id}" data-id="${s.id}">
+          <span class="play-icon">▶</span>
+          <div class="waveform-anim">
+            <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+            <div class="wbar"></div><div class="wbar"></div>
+          </div>
+          <span class="preview-label">Preview</span>
+          <span class="pause-label">⏸ Pause</span>
+        </button>
+        <button class="btn-find" id="find-btn-${s.id}" data-id="${s.id}">
+          🔗 Full Song
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  // Attach listeners
+  SONGS.forEach(s => {
+    document.getElementById(`prev-btn-${s.id}`).addEventListener('click', () => handlePreview(s));
+    document.getElementById(`find-btn-${s.id}`).addEventListener('click', () => openFindModal(s));
+  });
+}
+
+// ── FILTER LOGIC ───────────────────────────────────────────────────────────────
+let activeFilter = 'all';
+
+function applyFilter(filter) {
+  activeFilter = filter;
+  let count = 0;
+  SONGS.forEach(s => {
+    const card = document.getElementById(`card-${s.id}`);
+    const show = filter === 'all' || s.cats.includes(filter);
+    card.classList.toggle('hidden', !show);
+    if (show) count++;
+  });
+  document.getElementById('visible-count').textContent = count;
+  document.getElementById('empty').classList.toggle('show', count === 0);
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilter(btn.dataset.filter);
+  });
+});
+
+// ── SC WIDGET ─────────────────────────────────────────────────────────────────
+let widget = null;
+let widgetReady = false;
+let widgetInitialized = false;
+
+function initWidget() {
+  if (typeof SC === 'undefined') return;
+  const iframe = document.getElementById('sc-widget');
+  widget = SC.Widget(iframe);
+  widget.bind(SC.Widget.Events.READY, () => {
+    widgetReady = true;
+  });
+  widget.bind(SC.Widget.Events.FINISH, () => {
+    stopPreview(true);
+  });
+  widgetInitialized = true;
+}
+
+// ── PLAYBACK STATE ─────────────────────────────────────────────────────────────
+let currentSongId = null;
+let previewTimeout = null;
+let progressRaf = null;
+let progressStart = null;
+let progressDuration = 0;
+let isPaused = false;
+
+function handlePreview(song) {
+  // If same song is playing → toggle pause
+  if (currentSongId === song.id && !isPaused) {
+    pausePreview();
+    return;
+  }
+  if (currentSongId === song.id && isPaused) {
+    resumePreview();
+    return;
+  }
+
+  // Stop whatever was playing
+  stopPreview(false);
+
+  if (song.previewSrc === 'sc') {
+    playSCSong(song);
+  } else {
+    // Non-SC songs: open modal with links
+    openFindModal(song, true);
+  }
+}
+
+function playSCSong(song) {
+  if (!widgetInitialized) initWidget();
+  if (!widgetReady || !widget) {
+    // Widget not ready yet — try again shortly
+    setTimeout(() => playSCSong(song), 400);
+    return;
+  }
+
+  currentSongId = song.id;
+  isPaused = false;
+  progressDuration = song.previewDuration;
+
+  markPlaying(song.id, true);
+  showMiniPlayer(song);
+
+  widget.bind(SC.Widget.Events.PLAY, function onFirstPlay() {
+    widget.unbind(SC.Widget.Events.PLAY);
+    if (song.previewStart > 0) widget.seekTo(song.previewStart * 1000);
+    startProgress(song.previewDuration);
+    previewTimeout = setTimeout(() => stopPreview(true), song.previewDuration * 1000 + 800);
+  });
+
+  widget.load(song.scUrl, { auto_play: true });
+}
+
+function pausePreview() {
+  if (!widget || currentSongId === null) return;
+  isPaused = true;
+  widget.pause();
+  clearTimeout(previewTimeout);
+  cancelAnimationFrame(progressRaf);
+  const btn = document.getElementById(`prev-btn-${currentSongId}`);
+  if (btn) {
+    btn.classList.remove('playing');
+    btn.querySelector('.preview-label').style.display = '';
+    btn.querySelector('.pause-label').style.display = 'none';
+    btn.querySelector('.play-icon').textContent = '▶';
+  }
+  document.getElementById('mp-pause-btn').textContent = '▶';
+}
+
+function resumePreview() {
+  if (!widget || currentSongId === null) return;
+  isPaused = false;
+  widget.play();
+  // Estimate remaining progress
+  const fill = document.getElementById(`prog-fill-${currentSongId}`);
+  const currentPct = fill ? parseFloat(fill.style.width) || 0 : 0;
+  const remaining = progressDuration * (1 - currentPct / 100);
+  startProgress(remaining, currentPct);
+  previewTimeout = setTimeout(() => stopPreview(true), remaining * 1000);
+  markPlaying(currentSongId, true);
+  document.getElementById('mp-pause-btn').textContent = '⏸';
+}
+
+function stopPreview(showFindSong = false) {
+  clearTimeout(previewTimeout);
+  cancelAnimationFrame(progressRaf);
+  if (widget && currentSongId !== null) {
+    try { widget.pause(); } catch(e) {}
+  }
+  if (currentSongId !== null) {
+    markPlaying(currentSongId, false);
+    resetProgressBar(currentSongId);
+  }
+  hideMiniPlayer();
+  currentSongId = null;
+  isPaused = false;
+}
+
+function markPlaying(id, playing) {
+  const btn = document.getElementById(`prev-btn-${id}`);
+  const prog = document.getElementById(`prog-${id}`);
+  if (!btn) return;
+  btn.classList.toggle('playing', playing);
+  if (prog) prog.classList.toggle('show', playing);
+}
+
+// ── PROGRESS ──────────────────────────────────────────────────────────────────
+function startProgress(duration, startPct = 0) {
+  cancelAnimationFrame(progressRaf);
+  const startMs = performance.now();
+  const startedAt = (startPct / 100) * duration * 1000;
+
+  function tick(now) {
+    const elapsed = now - startMs + startedAt;
+    const pct = Math.min((elapsed / (duration * 1000)) * 100, 100);
+    setProgressBar(currentSongId, pct);
+    setMiniProgress(pct);
+    if (pct < 100) progressRaf = requestAnimationFrame(tick);
+  }
+  progressRaf = requestAnimationFrame(tick);
+}
+
+function setProgressBar(id, pct) {
+  const el = document.getElementById(`prog-fill-${id}`);
+  if (el) el.style.width = pct + '%';
+}
+
+function resetProgressBar(id) {
+  const el = document.getElementById(`prog-fill-${id}`);
+  if (el) { el.style.transition = 'none'; el.style.width = '0%'; }
+  const bar = document.getElementById(`prog-${id}`);
+  if (bar) bar.classList.remove('show');
+}
+
+function setMiniProgress(pct) {
+  const el = document.getElementById('mp-fill');
+  if (el) el.style.width = pct + '%';
+}
+
+// ── MINI PLAYER ───────────────────────────────────────────────────────────────
+function showMiniPlayer(song) {
+  document.getElementById('mp-artwork').textContent = song.emoji;
+  document.getElementById('mp-title').textContent = song.title;
+  document.getElementById('mp-artist').textContent = song.artist;
+  document.getElementById('mp-pause-btn').textContent = '⏸';
+  document.getElementById('mini-player').classList.add('up');
+
+  // Wire "Full Song" in mini player
+  document.getElementById('mp-find-btn').onclick = () => openFindModal(song);
+}
+
+function hideMiniPlayer() {
+  document.getElementById('mini-player').classList.remove('up');
+  setMiniProgress(0);
+}
+
+document.getElementById('mp-pause-btn').addEventListener('click', () => {
+  if (currentSongId === null) return;
+  if (isPaused) resumePreview(); else pausePreview();
+});
+
+document.getElementById('mp-close-btn').addEventListener('click', () => stopPreview());
+
+// ── FIND FULL SONG MODAL ───────────────────────────────────────────────────────
+const PLATFORM_META = {
+  spotify:    { icon: '🎵', cls: 'icon-spotify',    name: 'Spotify' },
+  youtube:    { icon: '▶️', cls: 'icon-youtube',    name: 'YouTube' },
+  soundcloud: { icon: '☁️', cls: 'icon-soundcloud', name: 'SoundCloud' }
+};
+
+function openFindModal(song, isPreviewFallback = false) {
+  document.getElementById('modal-song-name').textContent = song.title;
+  document.getElementById('modal-song-artist').textContent = song.artist + (isPreviewFallback ? ' — No preview available' : '');
+
+  const linksEl = document.getElementById('modal-links');
+  linksEl.innerHTML = Object.entries(song.links).map(([platform, info]) => {
+    const meta = PLATFORM_META[platform] || { icon: '🔗', cls: '', name: platform };
+    return `
+      <a class="modal-link-btn" href="${info.url}" target="_blank" rel="noopener noreferrer">
+        <div class="modal-link-icon ${meta.cls}">${meta.icon}</div>
+        <div>
+          <div>${meta.name}</div>
+          <div class="modal-link-label">${info.label}</div>
+        </div>
+      </a>`;
+  }).join('');
+
+  document.getElementById('find-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('find-modal').classList.remove('open');
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('find-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('find-modal')) closeModal();
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderCards();
+
+// Init SC widget once api.js loads
+if (typeof SC !== 'undefined') {
+  initWidget();
+} else {
+  // api.js might still be loading
+  window.addEventListener('load', () => {
+    if (typeof SC !== 'undefined') initWidget();
+  });
+}
+
+// Keyboard: Escape closes modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>
